@@ -5,7 +5,7 @@ from utils import SamplesStatistic
 
 class BurrowsWheelerTransform:
     @staticmethod
-    def shifted_texts(text: str) -> List[str]:
+    def _shifted_texts(text: str) -> List[str]:
         """
         Generate and return list of shifted on one char versions of text
         :param text: original word, we should shift
@@ -46,7 +46,7 @@ class BurrowsWheelerTransform:
         :param text: original text
         :return: tuple encoded text and index of original in shifted_texts
         """
-        shifted_texts = cls.shifted_texts(text)
+        shifted_texts = cls._shifted_texts(text)
         shifted_texts.sort()
         encoded_index = cls._calc_origin_index(shifted_texts, text)
         encoded_word = cls._last_letter_text(shifted_texts)

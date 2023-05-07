@@ -1,6 +1,7 @@
 import math
 
 from bitarray import bitarray
+from utils import StringSample
 
 
 class BloomFilter:
@@ -12,6 +13,7 @@ class BloomFilter:
     PROBABILITY_FALSE_TRIGGER = 0.01
 
     def __init__(self, expected_num_elements: int) -> None:
+        self._expected_num_elements = expected_num_elements
         self._filter_len = self._calc_filter_length(expected_num_elements)
 
         self._filter = bitarray(self._filter_len)
@@ -79,6 +81,37 @@ class BloomFilter:
         for i in range(self._num_hash_func):
             self._filter[self._parameterized_hash_func(new_item, i)] = 1
 
+    def filter_test(self, test_string: str) -> None:
+        """
+        Testing filter with adding every fifth word of test_string.
+        :param test_string: text for testing
+        :return: None
+        """
+        test_parts = list(set(test_string.split(' ')))
+        false_true_counter = 0
+        true_counter = 0
+
+        # adding in filter elements, what we can divide at 5
+        for i, part in enumerate(test_parts):
+            if i % 5 == 0:
+                self.add_to_filter(part)
+
+        # checking
+        for i, part in enumerate(test_parts):
+            if i % 5 != 0 and not self.check_is_not_in_filter(part):
+                false_true_counter += 1
+            if not self.check_is_not_in_filter(part):
+                true_counter += 1
+
+        print('Length of text testing sample ', len(test_parts))
+        print('False true counter:', false_true_counter)
+        print('General true counter:', true_counter)
+
 
 if __name__ == '__main__':
-    bloom_filter = BloomFilter(1000000)
+    url = 'https://en.wikipedia.org/wiki/Bloom_filter'
+    test_sample = StringSample.get_html_str_data_by_url(url)
+
+    bloom_filter = BloomFilter(10000)
+
+    bloom_filter.filter_test(test_sample)
